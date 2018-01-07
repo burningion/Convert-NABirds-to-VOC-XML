@@ -17,6 +17,9 @@ except:
 # set this to -1 to generate all examples
 numberExamples = 3
 
+# labels to put in a labels.txt
+labels = set()
+
 def load_bounding_box_annotations(dataset_path=''):
   
   bboxes = {}
@@ -193,7 +196,7 @@ if __name__ == '__main__':
   random.shuffle(image_identifiers) 
   for image_id in image_identifiers:
     if numberExamples > 0 and counter == numberExamples + 1:
-      exit()
+      break
     
     image_path = image_paths[image_id]
     #image = plt.imread(image_path)
@@ -205,6 +208,9 @@ if __name__ == '__main__':
 
     # first, copy image to new flat VOCImages directory
     shutil.copyfile(image_path, 'VOCImages/' + os.path.split(image_path)[1])
+
+    # add the label to the set of labels
+    labels.add(class_name)
 
     # next, build labeled VOC xml file 
     annotation = etree.Element("annotation")
@@ -240,3 +246,8 @@ if __name__ == '__main__':
     et.write('Annotations/%06d.xml' % counter, pretty_print=True)
     counter += 1
     print class_name
+
+label_txt = open('labels.txt', 'w') 
+for name in labels:
+    print >> label_txt, name
+label_txt.close()
